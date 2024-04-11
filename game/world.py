@@ -66,6 +66,7 @@ class World (context.Context):
         self.events.append (seagull.Seagull())
         self.events.append (sickness.Sickness())
         self.events.append (drowned_pirates.DrownedPirates())
+        self.events.append (catfish_acuad002.Catfish())
         self.nouns["world"] = self
 
     def get_day (self):
