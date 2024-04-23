@@ -57,6 +57,7 @@ class SouthBeach (location.SubLocation):
 
 class DenseForest (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "forest"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -80,6 +81,7 @@ class DenseForest (location.SubLocation):
 
 class CliffCavern (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "cliff"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -103,6 +105,7 @@ class CliffCavern (location.SubLocation):
 
 class Campfire (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "campfire"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -122,6 +125,7 @@ class Campfire (location.SubLocation):
 
 class Clearing (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "clearing"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -143,8 +147,9 @@ class Clearing (location.SubLocation):
         elif (verb == "west"):
             announce ("Something tells you that you should seek another direction.")
 
-class FireflyGlade (location.Sublocation):
+class FireflyGlade (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "glade"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -152,17 +157,34 @@ class FireflyGlade (location.Sublocation):
         self.verbs['west'] = self
         self.event_chance = 0
 
+        self.verbs['take'] = self
+        self.item_in_grass = Spyglass()
+
     def enter (self):
-        announce ("You enter another set of dense trees until they once again part to a small glade. Despite you knowing it should still be daytime, the night sky is lit above your head. A multitude of fireflies flicker across the grass. In the distance, you see a different glimmer that attracts your attention.")
+        description = "You enter another set of dense trees until they once again part to a small glade. Despite you knowing it should still be daytime, the night sky is lit above your head. A multitude of fireflies flicker across the grass."
+        if self.item_in_grass != None:
+            description = description + " In the distance, you see a different glimmer that attracts your attention."
+        announce (description)
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "north"):
             config.the_player.next_loc = self.main_location.locations["clearing"] 
         elif (verb == "north" or verb == "east" or verb == "west"):
             announce ("You proceed to the edge of the glade, but some bizarre, invisible force prevents you from going any further.")
+        if (verb == "take"):
+            if self.item_in_grass == None:
+                announce ("You don't see anything to take.")
+            item = self.item_in_grass
+            if item != None:
+                announce ("You pick up the "+item.name+" from the grass.")
+                config.the_player.add_to_inventory([item])
+                self.item_in_grass = None
+                config.the_player.go = True
+
 
 class CaveEntrance (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "entrance"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -186,6 +208,7 @@ class CaveEntrance (location.SubLocation):
 
 class DeathlyCavern (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "danger"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -197,14 +220,15 @@ class DeathlyCavern (location.SubLocation):
         announce ("Something happens.")
 
     def process_verb (self, verb, cmd_list, nouns):
-        if (verb == "south"):
+        if (verb == "east"):
             announce ("You return to the cave entrance.")
             config.the_player.next_loc = self.main_location.locations["entrance"]
-        elif (verb == "east" or verb == "west" or verb == "south"):
+        elif (verb == "north" or verb == "west" or verb == "south"):
             announce ("There is no way forward here.")
 
 class Ravine (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "ravine"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -226,6 +250,7 @@ class Ravine (location.SubLocation):
 
 class TreasureRoom (location.SubLocation):
     def __init__ (self, m):
+        super().__init__(m)
         self.name = "treasure"
         self.verbs['north'] = self
         self.verbs['south'] = self
@@ -243,3 +268,6 @@ class TreasureRoom (location.SubLocation):
         elif (verb == "north" or verb == "east" or verb == "west"):
             announce ("There is no way forward.")
 
+class Spyglass (items.Item):
+    def __init__(self):
+        super().__init__("enchanted spyglass", 1000)
