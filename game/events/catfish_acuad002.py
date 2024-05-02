@@ -42,6 +42,9 @@ class Catfish (Context, event.Event):
         elif (verb == "help"):
             print ("catfish are harmless, but definitely look tasy... Feeding them may also come in useful later.")
             self.go = False
+        elif (verb == "ignore"):
+            print ("the catfish swam away.")
+            self.go = True
         else:
             print ("it seems the only options here are to catch, feed, or ignore")
             self.go = False
